@@ -3,7 +3,10 @@ import os
 
 
 def load_image(name, colorkey=None):
-    fullname = os.path.join('data', name)
+    if type(name) != str:
+        fullname = os.path.join('data', *name)
+    else:
+        fullname = os.path.join('data', name)
     try:
         image = pygame.image.load(fullname)
         image = image.convert_alpha()
@@ -35,6 +38,7 @@ class BaseHero(pygame.sprite.Sprite):
         if self.side == 'player':
             if row == 0:
                 self.board.board[row][col] = None
+                self.board.enemy_HP -= self.dmg
                 self.kill()
             elif self.board.get_item(row - 1, col) and self.board.get_item(row - 1, col).side != 'player':
                 self.board.get_item(row - 1, col).hit(self.dmg)
@@ -54,6 +58,7 @@ class BaseHero(pygame.sprite.Sprite):
         else:
             if row == 7:
                 self.board.board[row][col] = None
+                self.board.player_HP -= self.dmg
                 self.kill()
             elif self.board.get_item(row + 1, col) and self.board.get_item(row + 1, col).side == 'player':
                 self.board.get_item(row + 1, col).hit(self.dmg)
@@ -112,6 +117,7 @@ class Knight(BaseHero):
 
         if row == 0:
             self.board.board[row][col] = None
+            self.board.enemy_HP -= self.dmg
             self.kill()
         if self.board.get_item(row - 1, col) and self.board.get_item(row - 1, col).side != 'player':
             self.board.get_item(row - 1, col).hit(self.dmg)
@@ -158,6 +164,7 @@ class Ranger(BaseHero):
 
         if row == 0:
             self.board.board[row][col] = None
+            self.board.enemy_HP -= self.dmg
             self.kill()
 
         for i in range(-1, 2):
